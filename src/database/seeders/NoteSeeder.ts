@@ -1,4 +1,4 @@
-import type { EntityManager } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
 import { Note } from '../../note.entity';
 import { NoteFactory } from '../factories/NoteFactory';

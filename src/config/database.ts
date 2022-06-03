@@ -7,6 +7,7 @@ const logger = new Logger('MikroORM');
 const config = {
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
+  allowGlobalContext: true,
   dbName: process.env.DB_NAME || 'nestjs_core_api',
   type: process.env.DB_TYPE || 'postgresql',
   host: process.env.DB_HOST || 'localhost',
