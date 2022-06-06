@@ -22,6 +22,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     this.logger.warn(`${statusCode} ${message}`);
 
-    response.status(statusCode).json(body);
+    response.status(statusCode).json(exception.getResponse());
+    // response.status(statusCode).json(body);
   }
 }

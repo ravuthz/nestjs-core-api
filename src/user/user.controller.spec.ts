@@ -11,6 +11,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
+jest.setTimeout(90 * 1000);
+
 describe('UserController', () => {
   let app: INestApplication;
   let orm: MikroORM;
@@ -20,6 +22,7 @@ describe('UserController', () => {
   let user: User = null;
 
   beforeAll(async () => {
+
     const module = await Test.createTestingModule({
       imports: [ConfigModule.forRoot(), MikroOrmModule.forRoot(), UserModule],
     })

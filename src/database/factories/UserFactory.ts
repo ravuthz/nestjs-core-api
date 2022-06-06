@@ -10,7 +10,7 @@ export class UserFactory extends Factory<User> {
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
       username: faker.name.findName(),
-      password: faker.internet.password(),
+      password: '$2b$16$lkHfKXVIzdV1zvM.ar2MmuQmdgpN0d4TzCfqrZceVScXiG1fWbEny',
     };
   }
 }

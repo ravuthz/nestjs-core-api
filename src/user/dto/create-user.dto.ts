@@ -11,10 +11,12 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
+    // @Validate(UserUniqueRule, [User, 'email'], { message: `User already exists with email field` })
   email: string;
 
   @IsNotEmpty()
   @IsString()
+    // @Validate(UserUniqueRule, [User, 'username'], { message: `User already exists with username field` })
   username: string;
 
   @IsNotEmpty()

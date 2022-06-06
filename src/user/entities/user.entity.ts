@@ -24,7 +24,6 @@ export class User {
 
   @Property()
   @Unique()
-  @IsEmail()
   username: string;
 
   @Property()

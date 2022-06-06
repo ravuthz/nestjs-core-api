@@ -4,11 +4,12 @@ import { User } from './entities/user.entity';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import { UserUniqueRule } from './user-unique-rule.service';
 
 @Module({
   imports: [MikroOrmModule.forFeature([User])],
   controllers: [UserController],
-  providers: [UserService, UserRepository],
+  providers: [UserService, UserRepository, UserUniqueRule],
   exports: [UserService, UserRepository],
 })
 export class UserModule {}
