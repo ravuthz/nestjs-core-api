@@ -1,6 +1,7 @@
-import { Entity, EntityRepositoryType, PrimaryKey, Property, Unique } from '@mikro-orm/core';
-import { IsEmail } from 'class-validator';
+import { Collection, Entity, EntityRepositoryType, ManyToMany, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 import { Exclude } from 'class-transformer';
+import { IsEmail } from 'class-validator';
+import { Role } from '../../role/entities/role.entity';
 import { UserRepository } from '../user.repository';
 
 @Entity({ tableName: 'users', customRepository: () => UserRepository })
@@ -33,6 +34,9 @@ export class User {
   @Property({ nullable: true })
   profileImage?: string;
 
+  @ManyToMany()
+  roles: Collection<Role> = new Collection<Role>(this);
+
   @Property()
   createdAt = new Date();
 
@@ -41,6 +45,22 @@ export class User {
 
   constructor(partial: Partial<User> = {}) {
     Object.assign(this, partial);
+  }
+
+  async getAllRoleNames() {
+    await this.roles.init();
+    return this.roles.getItems().map(item => item.name);
+  }
+
+  async getAllPermissionNames() {
+    await this.roles.init();
+
+    let permissions = [];
+    for (let role of this.roles.getItems()) {
+      await role.permissions.init();
+      permissions = [...permissions, ...role.permissions.getItems()];
+    }
+    return permissions.map(item => item.name);
   }
 
 }

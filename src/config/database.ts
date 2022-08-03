@@ -1,7 +1,7 @@
-import { Options } from '@mikro-orm/core';
+import { Dictionary, IPrimaryKey, Options } from '@mikro-orm/core';
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
-import { Logger } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
 
 const logger = new Logger('MikroORM');
 const config = {
@@ -36,6 +36,12 @@ const config = {
     glob: '!(*.d).{js,ts}', // how to match seeder files (all .js and .ts files, but not .d.ts)
     emit: 'ts', // seeder generation mode
     fileName: (className: string) => className, // seeder file naming convention
+  },
+  findOneOrFailHandler: (
+    entityName: string,
+    where: Dictionary | IPrimaryKey,
+  ) => {
+    return new NotFoundException(`${entityName} not found!`);
   },
 } as unknown as Options;
 

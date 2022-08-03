@@ -1,16 +1,28 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { toUserDto } from '../shared/mappers';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginUserDto } from '../user/dto/login-user-dto';
-import { AuthGuard } from '@nestjs/passport';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { User } from '../user/entities/user.entity';
-import { toUserDto } from '../shared/mappers';
+import { AuthService } from './auth.service';
+import { Permissions } from './decorators/permissions.decorator';
+import { Roles } from './decorators/roles.decorator';
+import { PermissionsGuard } from './guards/permissions.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {
-  }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   public async register(@Body() createUserDto: CreateUserDto): Promise<User> {
@@ -28,9 +40,17 @@ export class AuthController {
     return await this.authService.login(loginUserDto);
   }
 
-  @Get('user')
-  @UseGuards(AuthGuard())
-  public async testAuth(@Req() req: any): Promise<JwtPayload> {
+  @Get('user/read')
+  @Permissions('user:read')
+  @UseGuards(AuthGuard(), PermissionsGuard)
+  public async getUserRead(@Req() req: any): Promise<JwtPayload> {
+    return toUserDto(req.user);
+  }
+
+  @Get('user/admin')
+  @Roles('user', 'admin')
+  @UseGuards(AuthGuard(), RolesGuard)
+  public async getUserAdmin(@Req() req: any): Promise<JwtPayload> {
     return toUserDto(req.user);
   }
 }

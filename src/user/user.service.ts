@@ -1,21 +1,26 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-import { UserRepository } from './user.repository';
 import { FindOptions } from '@mikro-orm/core';
-import { UserDto } from './dto/user-dto';
-import { LoginUserDto } from './dto/login-user-dto';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { toUserDto } from '../shared/mappers';
 import { comparePasswords, encryptPassword } from '../shared/utils';
+import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user-dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserDto } from './dto/user-dto';
+import { User } from './entities/user.entity';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('UserRepository')
     private readonly userRepository: UserRepository,
-  ) {
-  }
+  ) {}
 
   private async saveData(body: any, id: number) {
     if (!body) {
@@ -70,10 +75,7 @@ export class UserService {
 
   async isExist({ email, username }: any) {
     const exists = await this.userRepository.count({
-      $or: [
-        { email },
-        { username },
-      ],
+      $or: [{ email }, { username }],
     });
     if (exists > 0) {
       throw new BadRequestException('The email and username must be unique');
@@ -86,7 +88,7 @@ export class UserService {
 
   async findByLogin({ username, password }: LoginUserDto): Promise<UserDto> {
     // const user = await this.userRepository.findOne({ username });
-    const user = await this.findByPayload({ username});
+    const user = await this.findByPayload({ username });
 
     if (!user) {
       throw new UnauthorizedException('User was not found');
@@ -100,6 +102,4 @@ export class UserService {
 
     return toUserDto(user);
   }
-
-
 }

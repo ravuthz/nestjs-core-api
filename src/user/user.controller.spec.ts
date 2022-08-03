@@ -1,15 +1,15 @@
-import { Test } from '@nestjs/testing';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { UserModule } from './user.module';
-import { ConfigModule } from '@nestjs/config';
 import { MikroORM } from '@mikro-orm/core';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { INestApplication } from '@nestjs/common';
-import { results } from './mockData';
+import { ConfigModule } from '@nestjs/config';
+import { Test } from '@nestjs/testing';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { results } from './mockData';
+import { UserController } from './user.controller';
+import { UserModule } from './user.module';
+import { UserService } from './user.service';
 
 jest.setTimeout(90 * 1000);
 
@@ -22,11 +22,9 @@ describe('UserController', () => {
   let user: User = null;
 
   beforeAll(async () => {
-
     const module = await Test.createTestingModule({
       imports: [ConfigModule.forRoot(), MikroOrmModule.forRoot(), UserModule],
-    })
-      .compile();
+    }).compile();
 
     app = module.createNestApplication();
     await app.init();
@@ -35,14 +33,15 @@ describe('UserController', () => {
     service = app.get<UserService>(UserService);
     controller = app.get<UserController>(UserController);
 
-    user = await service.create(new CreateUserDto({
-      firstName: 'demo3',
-      lastName: 'user',
-      email: 'demo+3@delete.com',
-      username: 'demo@delete',
-      password: '123123',
-    }));
-
+    user = await service.create(
+      new CreateUserDto({
+        firstName: 'demo3',
+        lastName: 'user',
+        email: 'demo+3@delete.com',
+        username: 'demo@delete',
+        password: '123123',
+      }),
+    );
   });
 
   afterAll(async () => {
@@ -60,8 +59,7 @@ describe('UserController', () => {
       expect(await controller.findAll()).toBeTruthy();
     });
     it('should return an array of users using mockedUser', async () => {
-      jest.spyOn(service, 'findAll')
-        .mockImplementation(async () => results);
+      jest.spyOn(service, 'findAll').mockImplementation(async () => results);
       expect(await controller.findAll()).toBe(results);
     });
   });
@@ -71,8 +69,7 @@ describe('UserController', () => {
       expect(await controller.findOne('1')).toBeTruthy();
     });
     it('should return an user using mockedUser', async () => {
-      jest.spyOn(service, 'findOne')
-        .mockImplementation(async () => results[0]);
+      jest.spyOn(service, 'findOne').mockImplementation(async () => results[0]);
       expect(await controller.findOne('1')).toBe(results[0]);
     });
   });
@@ -109,5 +106,4 @@ describe('UserController', () => {
       expect(await controller.remove('' + user.id)).toBeFalsy();
     });
   });
-
 });
